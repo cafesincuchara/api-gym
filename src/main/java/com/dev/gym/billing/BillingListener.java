@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class BillingListener {
     @ApplicationModuleListener
     public void onMemberRegistered(MemberRegisteredEvent event) {
 
-        Invoice invoice = new Invoice(null, event.memberId(), event.price(), Status.PENDING);
+        Invoice invoice = new Invoice(null, event.memberId(), event.price(), Status.PENDING, LocalDateTime.now(), null);
         billingRepository.save(invoice);
         log.warn("Invoice creado y guardado");
 

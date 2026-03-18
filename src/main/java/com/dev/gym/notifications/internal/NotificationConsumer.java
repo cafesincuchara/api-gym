@@ -5,8 +5,9 @@ import com.dev.gym.billing.InvoicePaidEvent;
 import com.dev.gym.memberships.MemberRegisteredEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Slf4j
 @Component
@@ -22,7 +23,7 @@ public class NotificationConsumer {
     @RabbitListener(queues = "invoice.paid.queue")
     public void consumePayment(InvoicePaidEvent event) {
         log.info("$$$$ PAGO CONFIRMADO $$$$");
-        log.info("Factura ID: {} enviada por {}", event.invoiceId(), event.memberEmail());
+        log.info("Factura ID: {} enviada por {} , hora y fecha: {}", event.invoiceId(), event.memberEmail(), LocalDateTime.now());
         log.info("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     }
 }

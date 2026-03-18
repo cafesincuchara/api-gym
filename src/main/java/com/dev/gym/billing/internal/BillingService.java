@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,7 +31,8 @@ public class BillingService {
                 i.getId(),
                 i.getMemberId(),
                 i.getAmount(),
-                i.getStatus()
+                i.getStatus(),
+                i.getCreatedAt()
         )).toList();
 
     }
@@ -44,11 +46,11 @@ public class BillingService {
                 .orElseThrow(() -> new IllegalArgumentException("No encontrado"));
 
         invoice.setStatus(Status.PAID);
+        invoice.setPaidAt(LocalDateTime.now());
         billingRepository.save(invoice);
 
-        eventPublisher.publishEvent(new InvoicePaidEvent(id, memberEmail ));
-        log.warn("Invoice con id: " + id);
-    }
+        eventPublisher.publishEvent(new InvoicePaidEvent(id, memberEmail, invoice.getPaidAt() ));
+        log.info("Factura {} pagada el {}", id, invoice.getPaidAt());    }
 
     @Transactional
     public void payFailedById(UUID id){
