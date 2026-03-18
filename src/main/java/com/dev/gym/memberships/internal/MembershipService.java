@@ -3,6 +3,7 @@ package com.dev.gym.memberships.internal;
 import com.dev.gym.memberships.Member;
 import com.dev.gym.memberships.MemberRegisteredEvent;
 import com.dev.gym.memberships.MemberRepository;
+import com.dev.gym.memberships.domain.PlanType;
 import com.dev.gym.memberships.dto.MemberRequest;
 import com.dev.gym.memberships.dto.MemberResponse;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Slf4j
@@ -27,11 +29,15 @@ public class MembershipService {
         Member member = new Member(null, request.name(), request.email() , request.planType(), true);
         memberRepository.save(member);
 
+        BigDecimal amount = PlanType.fromName(request.name()).getPrice();
+
         //lanza el primer evento
         applicationEventPublisher.publishEvent(new MemberRegisteredEvent(
                 member.getId(),
                 member.getEmail(),
-                member.getPlanType().name()
+                member.getPlanType().name(),
+                amount
+
         ));
     }
 

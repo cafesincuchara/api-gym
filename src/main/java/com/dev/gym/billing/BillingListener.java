@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
-import java.math.BigDecimal;
 
 @Slf4j
 @Component
@@ -20,17 +19,9 @@ public class BillingListener {
     @ApplicationModuleListener
     public void onMemberRegistered(MemberRegisteredEvent event) {
 
-
-       BigDecimal amount = switch (event.planName()){
-           case "PREMIUM" -> new BigDecimal("7.900");
-           case "VIP" -> new BigDecimal("15.000");
-           case "BASIC" -> new BigDecimal("5.000");
-
-           default -> new BigDecimal("2.000");
-       };
-       Invoice invoice = new Invoice(null, event.memberId(), amount, Status.PENDING);
-        log.warn("Invoice creado");
-       billingRepository.save(invoice);
+        Invoice invoice = new Invoice(null, event.memberId(), event.price(), Status.PENDING);
+        billingRepository.save(invoice);
+        log.warn("Invoice creado y guardado");
 
     }
 }
